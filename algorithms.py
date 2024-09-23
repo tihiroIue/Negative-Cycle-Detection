@@ -196,13 +196,19 @@ def negative_cycle_detection(graph, source, c):
                         newly_changed2.add(v)
         changed, newly_changed1, newly_changed2 = newly_changed1.union(newly_changed2), set(), set()
 
-        if count_iteration >= (num_vertices / 3 + 2 + math.sqrt(2 * c * num_vertices * math.log2(num_vertices))):
+        if count_iteration >= (num_vertices / 3 + 2 + math.sqrt(2 * c * num_vertices * math.log10(num_vertices))):
             count_traversal += 1
             if subgraph_traversal(pred):
                 print("It takes ", count_iteration, "iterations before finding the negative cycle.")
                 print("It takes ", count_relaxation, "relaxations before finding the negative cycle.")
                 return (False, None, None, count_traversal)
-
+            
+    for u in range(num_vertices):
+        for v, w in graph[u].items():
+            if dist[v] > dist[u] + w:
+                print("It takes ", count_iteration, "iterations before finding the negative cycle.")
+                print("It takes ", count_relaxation, "relaxations before finding the negative cycle.")
+                return (False, dist, pred)
     print("It takes ", count_iteration, "iterations before finding the shortest path.")
     print("It takes ", count_relaxation, "relaxations before finding the shortest path.")
     return (True, dist, pred, count_traversal)
@@ -210,14 +216,6 @@ def negative_cycle_detection(graph, source, c):
 
 # Some simple testings.
 if __name__ == "__main__":
-
-    # print(adaptive_bellman_Ford(example_graph1, 0))
-    # print(randomized(example_graph1, 0))
-
-    """"
-    print(adaptive_bellman_Ford(example_graph2, 0))
-    print(randomized(example_graph2, 0))
-    """
     example_graph1 = {
     0: {1: -1},
     1: {2: 1},
@@ -236,32 +234,29 @@ if __name__ == "__main__":
         5: {1: -5}
     }
 
-    example_graph3 = graph.graph_generator(1000, 90000, False)
-    example_graph4 = graph.graph_generator(1000, 90000, True)
+    example_graph3 = graph.graph_generator(10, 90, False)
+    example_graph4 = graph.graph_generator(10, 90, True)
 
     example_graph5 = graph.graph_generator(10000, 90000, False)
     example_graph6 = graph.graph_generator(10000, 90000, True)
 
-    example_graph7 = {0: None, 1: 3, 2: 1, 4: 2, 6: 7, 7: 6}
+    example_graph7 = {0: None, 1: 2, 2: 0, 3: None, 4: 3, 5: 4, 6: 7, 7: 6}
+    example_graph8 = {0: 1, 1: 2, 2: 3, 3: 0, 4: 3, 5: 4, 6: 7, 7: 6}
+    example_graph9 = {0: 1, 1: 2, 2: 3, 3: 4, 4: None, 5: 6, 6: 7, 7: 8, 8: 5}
 
-    assert(subgraph_traversal(example_graph2) == True)
+    assert(subgraph_traversal(example_graph7) == True)
+    assert(subgraph_traversal(example_graph8) == True)
+    assert(subgraph_traversal(example_graph9) == True)
 
-    # adaptive_bellman_Ford(example_graph3, 0)
-
-    # adaptive_bellman_Ford(example_graph3, 0)
-    # print(randomized(example_graph1, 0))
-
-    # print(randomized(example_graph3, 0)[1] == adaptive_bellman_Ford(example_graph3, 0)[1])
-    # print(randomized(example_graph4, 0)[0] == negative_cycle_detection(example_graph4, 0, 2)[0])
-
-    # print(negative_cycle_detection(example_graph4, 0, 2))
+    # assert(randomized(example_graph3, 0)[1] == adaptive_bellman_Ford(example_graph3, 0)[1])
+    # assert(randomized(example_graph4, 0)[0] == negative_cycle_detection(example_graph4, 0, 2)[0])
     
-    """
+    # print(negative_cycle_detection(example_graph6, 0, 1.5)[0] == randomized(example_graph6, 0)[0])
+    
+    
     for i in range(100):
-        example_graph = graph.graph_generator(100, 900, True)
-        if(negative_cycle_detection(example_graph, 0, 2)[0] != randomized(example_graph, 0)[0]):
-            print("No equals in round ", i, ".")
-            break
-        else:
-            print(i)
-    """
+        example_graph = graph.graph_generator(1000, 9000, True)
+        assert(negative_cycle_detection(example_graph, 0, 2)[0] == randomized(example_graph, 0)[0])
+        # example_graph = graph.graph_generator(100, 900, False)
+        # assert(negative_cycle_detection(example_graph, 0, 2)[1] == randomized(example_graph, 0)[1])
+    

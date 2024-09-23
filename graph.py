@@ -28,14 +28,21 @@ def graph_with_negative_cycle(num_V, num_E, length):
     pass
 
 # Auxiliary function for generating graphs with a negative hamiltonian cycle.
-def graph_with_negative_hamiltonian_cycle(num_V, num_E, length):
+def graph_with_negative_hamiltonian_cycle(num_V, num_E):
     graph = graph_generator(num_V, num_E, False)
     vertices = list(range(num_V))
-    vertices_order = random.shuffle(vertices)
-    pass
+    random.shuffle(vertices)
+    for i in range(num_V):
+        if i + 1 == num_V:
+            u, v = vertices[i], vertices[0]
+        else:
+            u, v = vertices[i], vertices[i + 1]
+        graph[u][v] = -1
+    return graph
 
 if __name__ == "__main__":
     graph1 = graph_generator(10, 10, True)
     graph2 = graph_generator(10, 30, False)
     graph3 = graph_generator(1000, 30000, False)
-    print(graph1)
+    graph4 = graph_with_negative_hamiltonian_cycle(3, 3)
+    print(graph4)
